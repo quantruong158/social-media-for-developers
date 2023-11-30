@@ -11,6 +11,7 @@ import { useRef } from 'react'
 import PostCard from './PostCard'
 import { ScrollArea } from './ui/scroll-area'
 import { useRouter } from 'next/navigation'
+import PostTag from './PostTag'
 
 const CreatePost = ({ user }) => {
   const router = useRouter()
@@ -100,8 +101,12 @@ const CreatePost = ({ user }) => {
           </div>
         </div>
         <div className='code-img justify-between gap-5'>
-          <div className='flex h-80 w-full flex-col items-center justify-center rounded-lg bg-gray-500 text-background md:h-full'>
-            <p>Under development</p>
+          <div className='flex w-full flex-col items-center justify-center rounded-lg text-background gap-3 md:h-full'>
+            <PostTag />
+
+            <div className='flex h-0 w-full flex-row items-center justify-center rounded-lg bg-gray-500 text-background md:h-3/4'>
+              <p>Under development</p>
+            </div>
           </div>
           <UploadDnD setImgUrl={setImgUrl} />
         </div>
