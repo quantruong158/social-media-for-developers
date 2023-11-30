@@ -1,5 +1,6 @@
 'use client'
 
+import TagTicket from "./ui/tag-ticket";
 import { Textarea } from "./ui/textarea"
 import { useRef, useState } from "react"
 
@@ -22,14 +23,8 @@ const PostTag = () => {
     }
     return (
         <>
-        <div className='flex h-10 w-full flex-col items-center justify-center rounded-lg bg-gray-500 text-background md:h-20'>
-            <Textarea
-            /*onChange={(e) => setPost({ ...post, content: e.target.value })} */
-            placeholder='Add your tags'
-            className='min-h-10 border-primary text-lg focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 md:h-10'
-            ref={textRef}
-            >
-            </Textarea>
+        <div className='flex h-10 w-full flex-col items-center justify-center border-primary text-lg rounded-lg bg-stone-500 text-background md:h-20'>
+            <TagTicket tag={"C++"} onClick={() => { removeTag("C++")}} ></TagTicket>
         </div>
         </>
     )

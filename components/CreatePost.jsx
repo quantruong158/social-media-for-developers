@@ -104,7 +104,7 @@ const CreatePost = ({ user }) => {
           <div className='flex w-full flex-col items-center justify-center rounded-lg text-background gap-3 md:h-full'>
             <PostTag />
 
-            <div className='flex h-0 w-full flex-row items-center justify-center rounded-lg bg-gray-500 text-background md:h-3/4'>
+            <div className='flex h-0 w-full flex-row items-center justify-center rounded-lg bg-stone-500 text-background md:h-3/4'>
               <p>Under development</p>
             </div>
           </div>
