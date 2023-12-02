@@ -23,8 +23,9 @@ const PostTag = () => {
     }
     return (
         <>
-        <div className='flex h-10 w-full flex-col items-center justify-center border-primary text-lg rounded-lg bg-stone-500 text-background md:h-20'>
-            <TagTicket tag={"C++"} onClick={() => { removeTag("C++")}} ></TagTicket>
+            <div className='flex h-10 w-full flex-col items-left justify-center gap-5 
+        border-primary text-lg rounded-lg bg-stone-500 text-background md:h-20'>
+            <TagTicket tag={"C++"} onClick={() => {removeTag("C++")}} ></TagTicket>
         </div>
         </>
     )
