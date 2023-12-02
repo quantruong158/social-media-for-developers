@@ -1,5 +1,6 @@
 'use client'
 
+import TagAdder from "./ui/tag-adder";
 import TagTicket from "./ui/tag-ticket";
 import { Textarea } from "./ui/textarea"
 import { useRef, useState } from "react"
@@ -23,10 +24,11 @@ const PostTag = () => {
     }
     return (
         <>
-            <div className='flex h-10 w-full flex-col items-left justify-center gap-5 
-        border-primary text-lg rounded-lg bg-stone-500 text-background md:h-20'>
-            <TagTicket tag={"C++"} onClick={() => {removeTag("C++")}} ></TagTicket>
-        </div>
+            <div className='flex h-12 w-full flex-row items-center justify-left gap-1 
+            border-primary text-lg rounded-lg bg-stone-500 text-background md:h-20'>
+                <TagTicket className="flex flex-col" tag={"C++"} onClick={() => { removeTag("C++") }} ></TagTicket>
+                <TagAdder className="flex flex-col" onClick></TagAdder>
+            </div>
         </>
     )
 }
