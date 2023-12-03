@@ -4,15 +4,14 @@ import { cn } from "@/lib/utils"
 import { Button } from "./button"
 import { ArrowDownNarrowWide, PlusCircle } from "lucide-react"
 import { DropdownMenu,
-        DropdownMenuContent,
         DropdownMenuItem,
-        DropdownMenuTrigger
+        DropdownMenuTrigger,
+        DropdownMenuContent
 }from '@/components/ui/dropdown-menu'
 
 import {Input} from "@/components/ui/input"
-
-const TagAdder = (onClick ) => { 
-    const inputRef = React.useRef()
+const TagAdder = (onClick, exitsedTagList) => { 
+    const [tag, setTag] = React.useState();
     return (
         <>
             <div className="flex w-[200px] h-8 relative m-1 items-center justify-center 
@@ -22,28 +21,31 @@ const TagAdder = (onClick ) => {
                     <PlusCircle className="h-5"/>
                 </Button>
                 <Input
-                    ref={inputRef}
+                    value = {tag}
                     placeholder='Custom tag'
-                    className='h-5 border-0 border-primary focus:outline-none'
-                    onChange>
+                    className='h-5 border-0 border-primary focus:outline-none bg-transparent'
+                    onChange={e => setTag(e.target.value)}>
                 </Input>
-                <DropdownMenu className="flex w-3/4 flex-col">
+                <DropdownMenu className="flex w-3/4 flex-col bg-transparent">
                     <DropdownMenuTrigger asChild>
                         <button className="IconButton" aria-label="Customise options">
-                        <ArrowDownNarrowWide></ArrowDownNarrowWide>
+                            <ArrowDownNarrowWide></ArrowDownNarrowWide>
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align='end'>
-                        <DropdownMenuItem onClick>
-                            C++
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick>
-                            Meme
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick>
-                            Java
-                        </DropdownMenuItem>
+                            {/* Hard Code dropdown tag value
+                            Reimplement when we have a db for this */}
+                            <DropdownMenuItem textValue='C++' onClick={e => setTag(e.target.textContent)}>
+                                C++
+                            </DropdownMenuItem>
+                            <DropdownMenuItem textValue ='Meme' onClick={e => setTag(e.target.textContent)}>
+                                Meme
+                            </DropdownMenuItem>
+                            <DropdownMenuItem textValue ='Java' onClick={e => setTag(e.target.textContent)}>
+                                Java
+                            </DropdownMenuItem>
                     </DropdownMenuContent>
+                    
                 </DropdownMenu>
             </div>
         </>
