@@ -10,7 +10,7 @@ import { DropdownMenu,
 }from '@/components/ui/dropdown-menu'
 
 import {Input} from "@/components/ui/input"
-const TagAdder = ({clickHandle, existedTagList}) => { 
+const TagAdder = ({addClickHandle, existedTagList}) => { 
     const [tagName, setTagName] = React.useState();
     const renderExistedTagList = existedTagList.map(
         renderExistedTag => (
@@ -24,7 +24,7 @@ const TagAdder = ({clickHandle, existedTagList}) => {
             <div className="flex w-[200px] h-8 relative m-1 items-center justify-center 
             rounded-2xl border-2 bg-amber-600 
             border-primary focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 ">
-                <Button className="flex w-1/4 flex-col" variant="ghost" size="h-5" onClick={e => clickHandle(tagName)}>
+                <Button className="flex w-1/4 flex-col" variant="ghost" size="h-5" onClick={e => addClickHandle(tagName)}>
                     <PlusCircle className="h-5"/>
                 </Button>
                 <Input

@@ -31,7 +31,7 @@ const PostTag = () => {
         setTag(modifiedTagList)
     }
     const renderTagList = tagList.map(
-        renderTag => (<TagTicket className="flex flex-col" tagName={renderTag.name} clickHandle={removeTag}></TagTicket>)
+        renderTag => (<TagTicket className="flex flex-col" tagName={renderTag.name} removeClickHandle={removeTag}></TagTicket>)
     )
 
     return (
@@ -39,7 +39,7 @@ const PostTag = () => {
             <div className='flex h-12 w-full flex-row items-center justify-left gap-1 
             border-primary text-lg rounded-lg bg-stone-500 text-background md:h-20'>
                 {renderTagList}
-                <TagAdder className="flex flex-col" existedTagList = {existedTagList} clickHandle={addTag}></TagAdder>
+                <TagAdder className="flex flex-col" existedTagList = {existedTagList} addClickHandle={addTag}></TagAdder>
             </div>
         </>
     )
