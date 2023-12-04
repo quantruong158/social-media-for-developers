@@ -18,7 +18,11 @@ const PostTag = () => {
             //* Add new tag to existed tag list
             //*Implement for db later 
         }
-        setTag([...tagList, {name: tagName}]);
+        const checkedTagList = tagList.filter((tagItem) => {
+            return tagItem.name === tagName;
+        })
+        if (checkedTagList.length === 0)
+        setTag([...tagList, {name: tagName}])
     };
     const removeTag = (tagName) => { 
         const modifiedTagList = tagList.filter((tagItem) => {
