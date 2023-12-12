@@ -34,7 +34,7 @@ const CreatePost = ({ user }) => {
   const handleCreate = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch('/api/new-post', {
+      const res = await fetch('/api/posts', {
         method: 'POST',
         body: JSON.stringify({
           username: user.username,
