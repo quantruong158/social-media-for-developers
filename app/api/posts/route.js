@@ -2,7 +2,7 @@ import { connectToDB } from '@/utils/database'
 import { clerkClient } from '@clerk/nextjs'
 
 export const GET = async (req, { params }) => {
-    const { searchParams } = new URL(req.url)
+  const { searchParams } = new URL(req.url)
   const username = searchParams.get('username')
   console.log(username)
   const driver = await connectToDB()
@@ -49,6 +49,7 @@ export const GET = async (req, { params }) => {
           comments: comments['low'],
           shares: shares['low'],
           hasLiked: liked,
+          code: data.properties['code'],
         }
       })
       await session.close()
@@ -62,7 +63,7 @@ export const GET = async (req, { params }) => {
 }
 
 export const POST = async (req) => {
-  const { username, content, imgUrl } = await req.json()
+  const { username, content, imgUrl, code } = await req.json()
   const driver = await connectToDB()
   const createPost = async () => {
     const session = driver.session()
@@ -71,16 +72,17 @@ export const POST = async (req) => {
         tx.run(
           `
             match (me: User {username: $username})
-            create (p: Post {content: $content, imgUrl: $imgUrl, createdTime: datetime()}) <-[:OWNS]- (me)
+            create (p: Post {content: $content, imgUrl: $imgUrl, code: $code, createdTime: datetime()}) <-[:OWNS]- (me)
          `,
           {
             username: username,
             content: content,
             imgUrl: imgUrl,
+            code: code,
           },
         ),
       )
-      await session.close()                                                                                                                                                                                                                                    
+      await session.close()
     } catch (error) {
       console.log(error)
     }
