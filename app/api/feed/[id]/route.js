@@ -50,6 +50,7 @@ export const GET = async (req, { params }) => {
           comments: comments['low'],
           shares: shares['low'],
           hasLiked: liked,
+          code: data.properties['code']
         }
       })
       await session.close()
