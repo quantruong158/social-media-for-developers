@@ -43,11 +43,11 @@ const PostCard = ({ post, me }) => {
     const prevLiked = liked
     setLiked((prev) => !prev)
     try {
-      const res = await fetch('/api/like-post', {
+      console.log("bruh")
+      const res = await fetch(`/api/posts/${id}/likes`, {
         method: 'POST',
         body: JSON.stringify({
           username: me,
-          postId: id,
           liked: prevLiked,
         }),
       })

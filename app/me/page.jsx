@@ -1,12 +1,12 @@
 import Feed from '@/components/Feed'
-import { auth } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs';
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 const getPosts = async () => {
-  const { userId } = auth()
-  const res = await fetch(`http://localhost:3000/api/posts/${userId}`, {
+  const user = await currentUser();
+  const res = await fetch(`http://localhost:3000/api/posts?username=${user.username}`, {
     cache: 'no-store',
   })
   const posts = await res.json()

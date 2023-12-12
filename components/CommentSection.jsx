@@ -17,7 +17,7 @@ const CommentSection = ({ username, postId, me }) => {
   useEffect(() => {
     const getComments = async () => {
       try {
-        const res = await fetch(`/api/comments/${postId}`)
+        const res = await fetch(`/api/posts/${postId}/comments`)
         if (!res.ok) {
           throw new Error('Error')
         }
@@ -32,7 +32,7 @@ const CommentSection = ({ username, postId, me }) => {
   const handleComment = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/comments/${postId}`, {
+      const res = await fetch(`/api/posts/${postId}/comments`, {
         method: 'POST',
         body: JSON.stringify({
           postId: postId,

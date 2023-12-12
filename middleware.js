@@ -6,8 +6,8 @@ export default authMiddleware({
     '/sign-in',
     '/sign-up',
     '/api/posts/(.*)',
+    '/api/posts',
     '/api/uploadthing',
-    '/api/post/(.*)',
     '/api/feed/(.*)',
   ],
 })
