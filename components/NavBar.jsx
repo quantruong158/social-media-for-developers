@@ -28,9 +28,9 @@ const NavBar = async () => {
           </>
         ) : (
           <>
-          <Link href='/profile'>Profile</Link>
-          <Link href='/me'>Me</Link>
-          <Link href='/new-post'>New Post</Link>
+          <Link className={buttonVariants({ variant: "link" })} href='/profile'>Profile</Link>
+          <Link className={buttonVariants({ variant: "link" })} href='/me'>Me</Link>
+          <Link className={buttonVariants({ variant: "link" })} href='/new-post'>New Post</Link>
           <User />
           </>
         )}

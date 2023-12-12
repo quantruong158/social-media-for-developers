@@ -19,7 +19,7 @@ import { Repeat2Icon } from 'lucide-react'
 import { useState } from 'react'
 import CommentSection from './CommentSection'
 import ConfigurePost from './ConfigurePost'
-const PostCard = ({ post, me }) => {
+const PostCard = ({ post, me, isPreview }) => {
   const {
     id,
     owner,
@@ -43,7 +43,7 @@ const PostCard = ({ post, me }) => {
     const prevLiked = liked
     setLiked((prev) => !prev)
     try {
-      console.log("bruh")
+      console.log('bruh')
       const res = await fetch(`/api/posts/${id}/likes`, {
         method: 'POST',
         body: JSON.stringify({
@@ -63,7 +63,7 @@ const PostCard = ({ post, me }) => {
 
   return (
     <Card className='relative h-fit w-full border-none bg-secondary/20'>
-      <ConfigurePost id={id} owner={owner} me={me}/>
+      {!isPreview && <ConfigurePost id={id} owner={owner} me={me} />}
       <CardHeader className='flex-row gap-2 p-3'>
         {owner.imgUrl?.length > 0 ? (
           <Image
@@ -74,7 +74,7 @@ const PostCard = ({ post, me }) => {
             alt='avatar'
           />
         ) : (
-          <div className='h-[50px] w-[50px] bg-white rounded-full'/>
+          <div className='h-[50px] w-[50px] rounded-full bg-white' />
         )}
 
         <div>
@@ -119,6 +119,7 @@ const PostCard = ({ post, me }) => {
 
       <div className='m-3 flex items-center justify-center gap-1'>
         <Button
+          disabled={isPreview}
           className={cn(
             'w-1/3 gap-2 bg-secondary/20 dark:text-white',
             `${liked ? 'bg-primary font-semibold' : undefined} `,
@@ -131,6 +132,7 @@ const PostCard = ({ post, me }) => {
 
         <Dialog>
           <DialogTrigger
+            disabled={isPreview}
             className={cn(
               buttonVariants({ variant: 'default' }),
               'w-1/3 gap-2 bg-secondary/20 dark:text-white',
@@ -139,10 +141,13 @@ const PostCard = ({ post, me }) => {
             <MessagesSquareIcon width={15} />
             Comment
           </DialogTrigger>
-          <CommentSection username={owner.username} postId={id} me={me}/>
+          <CommentSection username={owner.username} postId={id} me={me} />
         </Dialog>
 
-        <Button className='w-1/3 gap-2 bg-secondary/20 dark:text-white'>
+        <Button
+          disabled={isPreview}
+          className='w-1/3 gap-2 bg-secondary/20 dark:text-white'
+        >
           <Repeat2Icon width={15} />
           Share
         </Button>
