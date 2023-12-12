@@ -1,61 +1,91 @@
 import { connectToDB } from '@/utils/database'
-import { clerkClient } from '@clerk/nextjs'
 
 export const GET = async (req, { params }) => {
-  const id = params.id
-  const user = await clerkClient.users.getUser(id)
+  const postId = params.id
+  const id = parseInt(postId)
   const driver = await connectToDB()
-  const getPosts = async () => {
+  const getPost = async () => {
     const session = driver.session()
     try {
+      console.log('working')
       const res = await session.executeRead((tx) =>
         tx.run(
           `
-        match (u:User {username: $username}) -[:OWNS]-> (p:Post)
-
-        optional match (p) <-[l:LIKES]- (:User)
-
-        with u, p, count(l) as likes
-        optional match (p) -[c: HAS_COMMENTS]-> (:Comment)
-
-        with u, p, likes, count(c) as comments
-        optional match (p) <-[s:SHARES]- (:User)
-        
-        return p as posts, u as users, likes, comments, COUNT(distinct s) as shares, exists((u) -[:LIKES]-> (p)) as liked
-        order by p.createdTime desc
-        `,
+            MATCH (p:Post)
+            WHERE apoc.node.id(p) = $id
+            return p as post`,
           {
-            username: user.username,
+            id: id,
           },
         ),
       )
-      if (res.records.length === 0) {
-        return []
-      }
-      const posts = res.records.map((record) => {
-        const data = record.get('posts')
-        const owner = record.get('users')
-        const likes = record.get('likes')
-        const comments = record.get('comments')
-        const shares = record.get('shares')
-        const liked = record.get('liked')
-        return {
-          id: data.identity['low'],
-          content: data.properties['content'],
-          postImageUrl: data.properties['imgUrl'],
-          owner: owner.properties,
-          likes: likes['low'],
-          comments: comments['low'],
-          shares: shares['low'],
-          hasLiked: liked,
-        }
-      })
       await session.close()
-      return posts
+      console.log('bruh')
+      const post = res.records[0].get('post').properties
+      console.log(post)
+      return post
     } catch (error) {
       console.log(error)
     }
   }
-  const posts = await getPosts()
-  return new Response(JSON.stringify(posts), { status: 200 })
+  const post = await getPost()
+  return new Response(JSON.stringify(post), { status: 200 })
+}
+
+export const DELETE = async (req, {params}) => {
+  const postId = params.id
+  const id = parseInt(postId)
+  const driver = await connectToDB()
+  const deletePost = async () => {
+    const session = driver.session()
+    try {
+      await session.executeWrite((tx) =>
+        tx.run(
+          `
+            MATCH (p:Post)
+            WHERE apoc.node.id(p) = $id
+            OPTIONAL MATCH (p)-[:HAS_COMMENTS]->(c:Comment)
+            detach delete p, c`,
+          {
+            id: id,
+          },
+        ),
+      )
+      await session.close()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  await deletePost()
+  return new Response({ message: 'deleted' }, { status: 200 })
+}
+
+export const PATCH = async (req, {params}) => {
+  const postId = params.id
+  const id = parseInt(postId)
+  const { content, imgUrl } = await req.json()
+  const driver = await connectToDB()
+  const updatePost = async () => {
+    const session = driver.session()
+    try {
+      await session.executeWrite((tx) =>
+        tx.run(
+          `
+            MATCH (p:Post)
+            WHERE apoc.node.id(p) = $id
+            SET p.content = $content, p.imgUrl = $imgUrl`,
+          {
+            id: id,
+            content: content,
+            imgUrl: imgUrl,
+          },
+        ),
+      )
+      await session.close()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  await updatePost()
+  return new Response({ message: 'updated' }, { status: 200 })
 }

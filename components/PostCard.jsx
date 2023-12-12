@@ -16,10 +16,13 @@ import { cn } from '@/lib/utils'
 import { ThumbsUpIcon } from 'lucide-react'
 import { MessagesSquareIcon } from 'lucide-react'
 import { Repeat2Icon } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CommentSection from './CommentSection'
 import ConfigurePost from './ConfigurePost'
-const PostCard = ({ post, me }) => {
+import CodeView from './CodeView'
+import { ClipBoard } from 'lucide-react'
+
+const PostCard = ({ post, me, isPreview }) => {
   const {
     id,
     owner,
@@ -30,9 +33,18 @@ const PostCard = ({ post, me }) => {
     time,
     postImageUrl,
     hasLiked,
+    code,
   } = post
   const [liked, setLiked] = useState(hasLiked)
   const [virtualLikes, setVirtualLikes] = useState(likes)
+  const [copyState, setCopyState] = useState(false)
+  useEffect(() => {
+    if (copyState) {
+      setTimeout(() => {
+        setCopyState((prev) => !prev)
+      }, 3000)
+    }
+  }, [copyState])
   const handleLike = async (e) => {
     e.preventDefault()
     if (!liked) {
@@ -43,11 +55,11 @@ const PostCard = ({ post, me }) => {
     const prevLiked = liked
     setLiked((prev) => !prev)
     try {
-      const res = await fetch('/api/like-post', {
+      console.log('bruh')
+      const res = await fetch(`/api/posts/${id}/likes`, {
         method: 'POST',
         body: JSON.stringify({
           username: me,
-          postId: id,
           liked: prevLiked,
         }),
       })
@@ -63,7 +75,7 @@ const PostCard = ({ post, me }) => {
 
   return (
     <Card className='relative h-fit w-full border-none bg-secondary/20'>
-      <ConfigurePost id={id} owner={owner} me={me}/>
+      {!isPreview && <ConfigurePost id={id} owner={owner} me={me} />}
       <CardHeader className='flex-row gap-2 p-3'>
         {owner.imgUrl?.length > 0 ? (
           <Image
@@ -74,7 +86,7 @@ const PostCard = ({ post, me }) => {
             alt='avatar'
           />
         ) : (
-          <div className='h-[50px] w-[50px] bg-white rounded-full'/>
+          <div className='h-[50px] w-[50px] rounded-full bg-white' />
         )}
 
         <div>
@@ -89,8 +101,54 @@ const PostCard = ({ post, me }) => {
         <p>{content}</p>
       </CardContent>
 
+      {code?.length > 0 && (
+        <div className='group relative mt-2 h-fit'>
+          <button
+            className='absolute right-5 top-3 z-[12] hidden h-9 w-9 items-center justify-center rounded-xl bg-primary text-white group-hover:flex'
+            onClick={() => {
+              setCopyState(true)
+              navigator.clipboard.writeText(code)
+            }}
+          >
+            {copyState ? (
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                stroke-width='2'
+                stroke-linecap='round'
+                stroke-linejoin='round'
+                class='lucide lucide-check'
+              >
+                <path d='M20 6 9 17l-5-5' />
+              </svg>
+            ) : (
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                stroke-width='2'
+                stroke-linecap='round'
+                stroke-linejoin='round'
+                class='lucide lucide-clipboard'
+              >
+                <rect width='8' height='4' x='8' y='2' rx='1' ry='1' />
+                <path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2' />
+              </svg>
+            )}
+          </button>
+          <CodeView code={code} />
+        </div>
+      )}
+
       {postImageUrl.length > 0 && (
-        <div className='relative flex w-full items-center justify-center'>
+        <div className='relative flex w-full items-center justify-center mt-2'>
           <Image
             className='h-full w-full'
             src={postImageUrl}
@@ -119,6 +177,7 @@ const PostCard = ({ post, me }) => {
 
       <div className='m-3 flex items-center justify-center gap-1'>
         <Button
+          disabled={isPreview}
           className={cn(
             'w-1/3 gap-2 bg-secondary/20 dark:text-white',
             `${liked ? 'bg-primary font-semibold' : undefined} `,
@@ -131,6 +190,7 @@ const PostCard = ({ post, me }) => {
 
         <Dialog>
           <DialogTrigger
+            disabled={isPreview}
             className={cn(
               buttonVariants({ variant: 'default' }),
               'w-1/3 gap-2 bg-secondary/20 dark:text-white',
@@ -139,10 +199,13 @@ const PostCard = ({ post, me }) => {
             <MessagesSquareIcon width={15} />
             Comment
           </DialogTrigger>
-          <CommentSection username={owner.username} postId={id} me={me}/>
+          <CommentSection username={owner.username} postId={id} me={me} />
         </Dialog>
 
-        <Button className='w-1/3 gap-2 bg-secondary/20 dark:text-white'>
+        <Button
+          disabled={isPreview}
+          className='w-1/3 gap-2 bg-secondary/20 dark:text-white'
+        >
           <Repeat2Icon width={15} />
           Share
         </Button>

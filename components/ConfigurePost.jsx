@@ -18,7 +18,7 @@ const ConfigurePost = ({ id, owner, me }) => {
   const handleDelete = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/delete-post?postId=${id}`, {
+      const res = await fetch(`/api/posts/${id}`, {
         method: 'DELETE',
       })
       if (!res.ok) {

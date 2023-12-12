@@ -8,7 +8,7 @@ const NavBar = async () => {
   return (
     <nav className='fixed left-0 right-0 top-0 flex h-16 items-center justify-between bg-background px-5 z-50'>
       <Link href='/' className='text-lg font-bold text-primary'>
-        NEO4J DEMO
+        DevUnite
       </Link>
       <div className='flex items-center gap-4'>
         {!userId ? (
@@ -28,9 +28,9 @@ const NavBar = async () => {
           </>
         ) : (
           <>
-          <Link href='/profile'>Profile</Link>
-          <Link href='/me'>Me</Link>
-          <Link href='/new-post'>New Post</Link>
+          <Link className={buttonVariants({ variant: "link" })} href='/profile'>Profile</Link>
+          <Link className={buttonVariants({ variant: "link" })} href='/me'>Me</Link>
+          <Link className={buttonVariants({ variant: "link" })} href='/new-post'>New Post</Link>
           <User />
           </>
         )}

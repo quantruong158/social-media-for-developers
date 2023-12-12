@@ -10,7 +10,6 @@ export const getPosts = async () => {
     cache: 'no-store',
   })
   const posts = await res.json()
-  console.log(posts)
   return posts
 }
 
@@ -23,7 +22,7 @@ export default async function Home() {
         <Feed posts={posts} />
       ) : (
         <>
-          <p>You're not signed in</p>
+          <h2 className='text-primary text-2xl font-semibold'>You're not signed in!</h2>
         </>
       )}
     </main>
