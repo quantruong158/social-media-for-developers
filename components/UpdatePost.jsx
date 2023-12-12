@@ -34,10 +34,9 @@ const UpdatePost = ({ user, id }) => {
   const handleUpdate = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch('/api/update-post', {
+      const res = await fetch(`/api/posts/${id}`, {
         method: 'PATCH',
         body: JSON.stringify({
-          id: parseInt(id),
           content: post.content,
           imgUrl: imgUrl,
         }),
@@ -57,7 +56,7 @@ const UpdatePost = ({ user, id }) => {
   useEffect(() => {
     const getPost = async () => {
       try {
-        const res = await fetch(`/api/post/${id}`)
+        const res = await fetch(`/api/posts/${id}`)
         if (!res.ok) {
           throw new Error('ERROR')
         } else {
