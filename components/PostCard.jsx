@@ -16,9 +16,12 @@ import { cn } from '@/lib/utils'
 import { ThumbsUpIcon } from 'lucide-react'
 import { MessagesSquareIcon } from 'lucide-react'
 import { Repeat2Icon } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CommentSection from './CommentSection'
 import ConfigurePost from './ConfigurePost'
+import CodeView from './CodeView'
+import { ClipBoard } from 'lucide-react'
+
 const PostCard = ({ post, me, isPreview }) => {
   const {
     id,
@@ -30,9 +33,18 @@ const PostCard = ({ post, me, isPreview }) => {
     time,
     postImageUrl,
     hasLiked,
+    code,
   } = post
   const [liked, setLiked] = useState(hasLiked)
   const [virtualLikes, setVirtualLikes] = useState(likes)
+  const [copyState, setCopyState] = useState(false)
+  useEffect(() => {
+    if (copyState) {
+      setTimeout(() => {
+        setCopyState((prev) => !prev)
+      }, 3000)
+    }
+  }, [copyState])
   const handleLike = async (e) => {
     e.preventDefault()
     if (!liked) {
@@ -89,8 +101,54 @@ const PostCard = ({ post, me, isPreview }) => {
         <p>{content}</p>
       </CardContent>
 
+      {code?.length > 0 && (
+        <div className='group relative mt-2 h-fit'>
+          <button
+            className='absolute right-5 top-3 z-[12] hidden h-9 w-9 items-center justify-center rounded-xl bg-primary text-white group-hover:flex'
+            onClick={() => {
+              setCopyState(true)
+              navigator.clipboard.writeText(code)
+            }}
+          >
+            {copyState ? (
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                stroke-width='2'
+                stroke-linecap='round'
+                stroke-linejoin='round'
+                class='lucide lucide-check'
+              >
+                <path d='M20 6 9 17l-5-5' />
+              </svg>
+            ) : (
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                stroke-width='2'
+                stroke-linecap='round'
+                stroke-linejoin='round'
+                class='lucide lucide-clipboard'
+              >
+                <rect width='8' height='4' x='8' y='2' rx='1' ry='1' />
+                <path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2' />
+              </svg>
+            )}
+          </button>
+          <CodeView code={code} />
+        </div>
+      )}
+
       {postImageUrl.length > 0 && (
-        <div className='relative flex w-full items-center justify-center'>
+        <div className='relative flex w-full items-center justify-center mt-2'>
           <Image
             className='h-full w-full'
             src={postImageUrl}

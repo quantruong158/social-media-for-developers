@@ -11,10 +11,12 @@ import { useRef } from 'react'
 import PostCard from './PostCard'
 import { ScrollArea } from './ui/scroll-area'
 import { useRouter } from 'next/navigation'
+import CodeEditor from './CodeEditor'
 
 const CreatePost = ({ user }) => {
   const router = useRouter()
   const textRef = useRef()
+  const [code, setCode] = useState('')
   const [imgUrl, setImgUrl] = useState('')
   const [post, setPost] = useState({
     id: 0,
@@ -30,6 +32,7 @@ const CreatePost = ({ user }) => {
     time: 0,
     postImageUrl: '',
     hasLiked: false,
+    code: '',
   })
   const handleCreate = async (e) => {
     e.preventDefault()
@@ -40,6 +43,7 @@ const CreatePost = ({ user }) => {
           username: user.username,
           content: post.content,
           imgUrl: post.postImageUrl,
+          code: post.code,
         }),
       })
       if (!res.ok) {
@@ -54,7 +58,7 @@ const CreatePost = ({ user }) => {
     }
   }
   const isEmpty = () => {
-    return imgUrl === '' && post.content === ''
+    return imgUrl === '' && post.content === '' && post.code === ''
   }
   return (
     <main className='mb-5 mt-20 flex justify-center'>
@@ -95,9 +99,9 @@ const CreatePost = ({ user }) => {
               >
                 Preview
               </DialogTrigger>
-              <DialogContent className='bottom-0 left-[50%] top-auto flex h-fit max-h-[90%] sm:max-h-[80%] max-w-2xl translate-x-[-50%] translate-y-0 flex-col border-2 border-primary p-3 sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%]'>
-                <ScrollArea className='flex h-full flex-col gap-3'>
-                  <PostCard post={post} isPreview={true}/>
+              <DialogContent className='bottom-0 left-[50%] top-auto flex h-fit max-h-[90%] max-w-2xl translate-x-[-50%] translate-y-0 flex-col border-2 border-primary p-3 sm:left-[50%] sm:top-[50%] sm:max-h-[80%] sm:translate-x-[-50%] sm:translate-y-[-50%]'>
+                <ScrollArea className='flex h-full flex-col gap-3 pr-8'>
+                  <PostCard post={post} isPreview={true} />
                 </ScrollArea>
               </DialogContent>
             </Dialog>
@@ -105,7 +109,12 @@ const CreatePost = ({ user }) => {
         </div>
         <div className='code-img justify-between gap-5'>
           <div className='flex h-80 w-full flex-col items-center justify-center rounded-lg bg-gray-500 text-background md:h-full'>
-            <p>Under development</p>
+            <CodeEditor
+              code={code}
+              setCode={setCode}
+              post={post}
+              setPost={setPost}
+            />
           </div>
           <UploadDnD setImgUrl={setImgUrl} />
         </div>
