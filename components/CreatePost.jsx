@@ -20,6 +20,7 @@ const CreatePost = ({ user }) => {
   const textRef = useRef()
   const [code, setCode] = useState('')
   const [imgUrl, setImgUrl] = useState('')
+  const [tagList, setTagList] = useState([]);
   const [post, setPost] = useState({
     id: 0,
     owner: {
@@ -111,7 +112,7 @@ const CreatePost = ({ user }) => {
         </div>
         <div className='code-img justify-between gap-5'>
           <div className='flex w-full flex-col items-center justify-center rounded-lg text-background gap-3 md:h-full'>
-            <PostTag className="flex flex-row"/>
+            <PostTag setTagList={setTagList} className="flex flex-row"/>
             <div className='flex h-0 w-full flex-row items-center justify-center rounded-lg bg-stone-500 text-background md:h-3/4'>
             <CodeEditor
               code={code}

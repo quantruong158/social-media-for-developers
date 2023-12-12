@@ -5,11 +5,13 @@ import TagTicket from "./ui/tag-ticket";
 import { useState } from "react"
 
 
-const PostTag = () => {
-    //* 1:Use text area use get list of tags
-    //* (maybe we can use something else)
-    //* 2:Handle tags string (assume using a configure. i.e: #c++ #meme)
-    const [existedTagList, setExistTagList] = useState(["C++", "Meme", "React"])// existed tag from database, hard code 3 value
+const PostTag = (setTagList) => {
+    //* 1:Use tag adder component to create a tag list of tags
+    //* 2:Tag added to post will bbe store in tagList with userState to update
+    //* 2: Handle display tagList by tag-ticket
+    //* existedTagList is existed common tag from database to choose form, hard code 3 value
+
+    const [existedTagList, setExistTagList] = useState(["C++", "Meme", "React"])
     const [tagList, setTag] = useState([]);
     const addTag = (tagName) => {
         if (!existedTagList.includes(tagName))
@@ -23,12 +25,16 @@ const PostTag = () => {
         })
         if (checkedTagList.length === 0)
         setTag([...tagList, {name: tagName}])
+        //*call parent setTagList
+        setTagList(tagList)
     };
     const removeTag = (tagName) => { 
         const modifiedTagList = tagList.filter((tagItem) => {
             return tagItem.name !== tagName;
         })
         setTag(modifiedTagList)
+        //*call parent setTagList
+        setTagList(tagList)
     }
     const renderTagList = tagList.map(
         renderTag => (<TagTicket className="flex flex-col" tagName={renderTag.name} removeClickHandle={removeTag}></TagTicket>)
