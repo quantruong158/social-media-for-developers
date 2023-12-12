@@ -53,6 +53,9 @@ const CreatePost = ({ user }) => {
       console.error(err)
     }
   }
+  const isEmpty = () => {
+    return imgUrl === '' && post.content === ''
+  }
   return (
     <main className='mb-5 mt-20 flex justify-center'>
       <section className='flex w-full flex-col justify-center gap-5 px-5 md:h-[70vh] lg:w-[1024px]'>
@@ -77,6 +80,7 @@ const CreatePost = ({ user }) => {
           <div className='absolute -right-14 top-[40%] rotate-90'>
             <Dialog>
               <DialogTrigger
+                disabled={isEmpty()}
                 onClick={() => {
                   setPost({
                     ...post,
@@ -91,9 +95,9 @@ const CreatePost = ({ user }) => {
               >
                 Preview
               </DialogTrigger>
-              <DialogContent className='bottom-0 left-[50%] top-auto flex h-[90%] max-w-2xl translate-x-[-50%] translate-y-0 flex-col border-2 border-primary p-3 sm:left-[50%] sm:top-[50%] sm:h-[70%] sm:translate-x-[-50%] sm:translate-y-[-50%]'>
+              <DialogContent className='bottom-0 left-[50%] top-auto flex h-fit max-h-[90%] sm:max-h-[80%] max-w-2xl translate-x-[-50%] translate-y-0 flex-col border-2 border-primary p-3 sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%]'>
                 <ScrollArea className='flex h-full flex-col gap-3'>
-                  <PostCard post={post} />
+                  <PostCard post={post} isPreview={true}/>
                 </ScrollArea>
               </DialogContent>
             </Dialog>
