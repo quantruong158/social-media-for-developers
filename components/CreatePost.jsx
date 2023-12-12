@@ -11,13 +11,16 @@ import { useRef } from 'react'
 import PostCard from './PostCard'
 import { ScrollArea } from './ui/scroll-area'
 import { useRouter } from 'next/navigation'
+import PostTag from './PostTag'
 import CodeEditor from './CodeEditor'
+
 
 const CreatePost = ({ user }) => {
   const router = useRouter()
   const textRef = useRef()
   const [code, setCode] = useState('')
   const [imgUrl, setImgUrl] = useState('')
+  const [tagList, setTagList] = useState([]);
   const [post, setPost] = useState({
     id: 0,
     owner: {
@@ -108,13 +111,16 @@ const CreatePost = ({ user }) => {
           </div>
         </div>
         <div className='code-img justify-between gap-5'>
-          <div className='flex h-80 w-full flex-col items-center justify-center rounded-lg bg-gray-500 text-background md:h-full'>
-            <CodeEditor
-              code={code}
-              setCode={setCode}
-              post={post}
-              setPost={setPost}
-            />
+          <div className='flex w-full flex-col items-center justify-center rounded-lg text-background gap-3 md:h-full'>
+            <PostTag className="flex flex-row" setTagList={setTagList} tagList={tagList} />
+            <div className='flex h-0 w-full flex-row items-center justify-center rounded-lg bg-stone-500 text-background md:h-3/4'>
+              <CodeEditor
+                code={code}
+                setCode={setCode}
+                post={post}
+                setPost={setPost}
+              />
+            </div>
           </div>
           <UploadDnD setImgUrl={setImgUrl} />
         </div>
