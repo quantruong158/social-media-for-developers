@@ -14,13 +14,12 @@ import { useRouter } from 'next/navigation'
 import PostTag from './PostTag'
 import CodeEditor from './CodeEditor'
 
-
 const CreatePost = ({ user }) => {
   const router = useRouter()
   const textRef = useRef()
   const [code, setCode] = useState('')
   const [imgUrl, setImgUrl] = useState('')
-  const [tagList, setTagList] = useState([]);
+  const [tagList, setTagList] = useState([])
   const [post, setPost] = useState({
     id: 0,
     owner: {
@@ -36,9 +35,14 @@ const CreatePost = ({ user }) => {
     postImageUrl: '',
     hasLiked: false,
     code: '',
+    tags: [],
   })
   const handleCreate = async (e) => {
     e.preventDefault()
+    if (tagList.length === 0) {
+      return
+    }
+    console.log(post)
     try {
       const res = await fetch('/api/posts', {
         method: 'POST',
@@ -47,6 +51,7 @@ const CreatePost = ({ user }) => {
           content: post.content,
           imgUrl: post.postImageUrl,
           code: post.code,
+          tagList: tagList,
         }),
       })
       if (!res.ok) {
@@ -61,7 +66,9 @@ const CreatePost = ({ user }) => {
     }
   }
   const isEmpty = () => {
-    return imgUrl === '' && post.content === '' && post.code === ''
+    return (
+      imgUrl === '' && post.content.trim() === '' && post.code.trim() === ''
+    )
   }
   return (
     <main className='mb-5 mt-20 flex justify-center'>
@@ -111,8 +118,14 @@ const CreatePost = ({ user }) => {
           </div>
         </div>
         <div className='code-img justify-between gap-5'>
-          <div className='flex w-full flex-col items-center justify-center rounded-lg text-background gap-3 md:h-full'>
-            <PostTag className="flex flex-row" setTagList={setTagList} tagList={tagList} />
+          <div className='flex w-full flex-col items-center justify-center gap-3 rounded-lg text-background md:h-full'>
+            <PostTag
+              className='flex flex-row'
+              setTagList={setTagList}
+              tagList={tagList}
+              post={post}
+              setPost={setPost}
+            />
             <div className='flex h-0 w-full flex-row items-center justify-center rounded-lg bg-stone-500 text-background md:h-3/4'>
               <CodeEditor
                 code={code}

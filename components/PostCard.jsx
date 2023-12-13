@@ -20,7 +20,6 @@ import { useState, useEffect } from 'react'
 import CommentSection from './CommentSection'
 import ConfigurePost from './ConfigurePost'
 import CodeView from './CodeView'
-import { ClipBoard } from 'lucide-react'
 
 const PostCard = ({ post, me, isPreview }) => {
   const {
@@ -34,6 +33,7 @@ const PostCard = ({ post, me, isPreview }) => {
     postImageUrl,
     hasLiked,
     code,
+    tags,
   } = post
   const [liked, setLiked] = useState(hasLiked)
   const [virtualLikes, setVirtualLikes] = useState(likes)
@@ -90,7 +90,16 @@ const PostCard = ({ post, me, isPreview }) => {
         )}
 
         <div>
-          <CardTitle className='text-xl'>{owner.username}</CardTitle>
+          <CardTitle className='flex gap-2 text-xl'>
+            <p>{owner.username}</p>
+            {tags.map((tag) => (
+              <div key={tag} className='flex items-center gap-1'>
+                <div className='w-fit rounded-full bg-primary px-2 text-xs text-white'>
+                  {tag}
+                </div>
+              </div>
+            ))}
+          </CardTitle>
           <CardDescription className='text-xs text-slate-600 dark:text-slate-400'>
             {owner.email}
           </CardDescription>
@@ -118,10 +127,10 @@ const PostCard = ({ post, me, isPreview }) => {
                 viewBox='0 0 24 24'
                 fill='none'
                 stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
-                class='lucide lucide-check'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='lucide lucide-check'
               >
                 <path d='M20 6 9 17l-5-5' />
               </svg>
@@ -133,10 +142,10 @@ const PostCard = ({ post, me, isPreview }) => {
                 viewBox='0 0 24 24'
                 fill='none'
                 stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
-                class='lucide lucide-clipboard'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='lucide lucide-clipboard'
               >
                 <rect width='8' height='4' x='8' y='2' rx='1' ry='1' />
                 <path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2' />
@@ -148,7 +157,7 @@ const PostCard = ({ post, me, isPreview }) => {
       )}
 
       {postImageUrl.length > 0 && (
-        <div className='relative flex w-full items-center justify-center mt-2'>
+        <div className='relative mt-2 flex w-full items-center justify-center'>
           <Image
             className='h-full w-full'
             src={postImageUrl}

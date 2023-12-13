@@ -21,8 +21,11 @@ export const GET = async (req, { params }) => {
 
         with u, p, likes, count(c) as comments
         optional match (p) <-[s:SHARES]- (:User)
+
+        with u, p, likes, comments, count(s) as shares
+        optional match (p) -[:HAS_TAGS]-> (t :Tag)
         
-        return p as posts, u as users, likes, comments, COUNT(distinct s) as shares, exists((u) -[:LIKES]-> (p)) as liked
+        return p as posts, u as users, likes, comments, shares, exists((u) -[:LIKES]-> (p)) as liked, collect(t.value) as tagnames
         order by p.createdTime desc
         `,
           {
@@ -40,6 +43,7 @@ export const GET = async (req, { params }) => {
         const comments = record.get('comments')
         const shares = record.get('shares')
         const liked = record.get('liked')
+        const tags = record.get('tagnames')
         return {
           id: data.identity['low'],
           content: data.properties['content'],
@@ -50,6 +54,7 @@ export const GET = async (req, { params }) => {
           shares: shares['low'],
           hasLiked: liked,
           code: data.properties['code'],
+          tags: tags
         }
       })
       await session.close()
@@ -63,7 +68,9 @@ export const GET = async (req, { params }) => {
 }
 
 export const POST = async (req) => {
-  const { username, content, imgUrl, code } = await req.json()
+  const { username, content, imgUrl, code, tagList } = await req.json()
+  const tagIdList = tagList.map((tag) => tag.id)
+  console.log(tagIdList)
   const driver = await connectToDB()
   const createPost = async () => {
     const session = driver.session()
@@ -73,12 +80,17 @@ export const POST = async (req) => {
           `
             match (me: User {username: $username})
             create (p: Post {content: $content, imgUrl: $imgUrl, code: $code, createdTime: datetime()}) <-[:OWNS]- (me)
+            with p
+            unwind $tagIdList AS tagId
+            match (t: Tag) where apoc.node.id(t) = tagId
+            create (p) -[:HAS_TAGS]-> (t)
          `,
           {
             username: username,
             content: content,
             imgUrl: imgUrl,
             code: code,
+            tagIdList: tagIdList,
           },
         ),
       )

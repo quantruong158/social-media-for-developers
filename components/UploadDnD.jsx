@@ -6,31 +6,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 export default function UploadDnD({ setImgUrl }) {
-  const [images, setImages] = useState([])
-  const title = images.length ? (
-    <>
-      <p>Upload Complete</p>
-      <p className='mt-2'>{images.length} files</p>
-    </>
-  ) : null
-  const imgList = (
-    <>
-      {title}
-      <ul>
-        {images.map((image) => (
-          <li key={image.fileUrl} className='mt-2'>
-            <Link href={image.fileUrl} target='_blank'>
-              {image.fileUrl}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </>
-  )
   return (
     <>
       <UploadDropzone
-        className='mt-0 h-[200px] border-2 border-primary'
+        className='mt-0 h-full border-2 border-primary'
         appearance={{
           label: 'text-secondary hover:text-primary',
           button:

@@ -15,14 +15,17 @@ export const GET = async (req, { params }) => {
         match (me) -[:FOLLOWS]-> (u:User) -[:OWNS]-> (p:Post)
 
         optional match (p) <-[lk:LIKES]- (:User)
+
         with p, count(lk) as likes, u, me
-
         optional match (p) -[cm:HAS_COMMENTS]-> (:Comment)
-        with p, likes, u, me, count(cm) as comments
 
+        with p, likes, u, me, count(cm) as comments
         optional match (p) <-[sr:SHARES]- (:User)
 
-        return p as posts, u as users, likes, comments, COUNT(sr) as shares, exists((me) -[:LIKES]-> (p)) as liked
+        with p, likes, u, me, comments, count(sr) as shares
+        optional match (p) -[:HAS_TAGS]-> (t :Tag)
+
+        return p as posts, u as users, likes, comments, shares, exists((me) -[:LIKES]-> (p)) as liked, collect(t.value) as tagnames
         
         order by p.createdTime desc
         `,
@@ -41,6 +44,7 @@ export const GET = async (req, { params }) => {
         const comments = record.get('comments')
         const shares = record.get('shares')
         const liked = record.get('liked')
+        const tags = record.get('tagnames')
         return {
           id: data.identity['low'],
           content: data.properties['content'],
@@ -50,7 +54,8 @@ export const GET = async (req, { params }) => {
           comments: comments['low'],
           shares: shares['low'],
           hasLiked: liked,
-          code: data.properties['code']
+          code: data.properties['code'],
+          tags: tags,
         }
       })
       await session.close()
