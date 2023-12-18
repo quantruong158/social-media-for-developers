@@ -19,16 +19,14 @@ const TagAdder = ({ addClickHandle, existedTagList }) => {
   const [searchedTags, setSearchedTags] = useState([])
   const [debouncedValue] = useDebounce(query, 300)
   const [isSearching, setIsSearching] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        console.log(query)
-        if (query === '') {
-          setIsSearching(false)
-          setSearchedTags([])
-          return
-        }
-        const res = await fetch(`http://localhost:3000/api/tags?q=${query}`)
+        const encodedQuery = encodeURIComponent(query)
+        const res = await fetch(
+          `http://localhost:3000/api/tags?q=${encodedQuery}`,
+        )
         if (!res.ok) {
           throw Error('error fetch tags')
         }
@@ -46,48 +44,83 @@ const TagAdder = ({ addClickHandle, existedTagList }) => {
     }
     fetchSearchResults()
   }, [debouncedValue])
-  
+
   const handleInputChange = (e) => {
     const inputValue = e.target.value
     setIsSearching(true)
     setQuery(inputValue)
   }
-  const renderExistedTagList = isSearching ? (
-    <p className='px-2 text-sm'>Searching...</p>
-  ) : (
+
+  const handleAddTag = async () => {
+    try {
+      setIsAdding(true)
+      const res = await fetch(`http://localhost:3000/api/tags`, {
+        method: 'POST',
+        body: JSON.stringify({
+          tagName: query.trim(),
+        }),
+      })
+      if (!res.ok) {
+        throw Error('error adding tags')
+      }
+      const data = await res.json()
+      console.log(data)
+      setSearchedTags([...searchedTags, data])
+      setIsAdding(false)
+    } catch (error) {
+      console.error('Error fetching search results:', error)
+    }
+  }
+
+  const renderExistedTagList =
+    !isSearching &&
     existedTagList.map((renderExistedTag) => (
       <DropdownMenuItem
         key={renderExistedTag.value}
         textValue={renderExistedTag.value}
-        onClick={(e) => setCurrentTag(renderExistedTag)}
+        onClick={() => setCurrentTag(renderExistedTag)}
       >
         {renderExistedTag.value}
       </DropdownMenuItem>
     ))
-  )
 
-  const renderSearchedTagList = searchedTags.map((tag) => (
-    <DropdownMenuItem
-      key={tag.value}
-      textValue={tag.value}
-      onClick={() => setCurrentTag(tag)}
-    >
-      {tag.value}
-    </DropdownMenuItem>
-  ))
+  const renderSearchedTagList =
+    searchedTags.length === 0 && !isSearching ? (
+      <>
+        <p className='mt-1 text-center text-sm'>No result found!</p>
+        <Button
+          className='mt-1 w-full text-white'
+          disabled={isAdding}
+          onClick={handleAddTag}
+        >
+          Add &#39;{query.trim()}&#39;
+        </Button>
+      </>
+    ) : (
+      searchedTags.map((tag) => (
+        <DropdownMenuItem
+          key={tag.value}
+          textValue={tag.value}
+          onClick={() => setCurrentTag(tag)}
+        >
+          {tag.value}
+        </DropdownMenuItem>
+      ))
+    )
 
   return (
     <>
       <div
-        className='relative m-1 flex h-8 max-w-[200px] items-center justify-center 
-            rounded-2xl border-2 border-primary 
+        className='relative m-1 flex h-8 max-w-[200px] items-center justify-center
+            rounded-2xl border-2 border-primary
             bg-primary focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 '
       >
         <Button
           className='ml-2 flex flex-col rounded-full'
           variant='ghost'
           size='h-5'
-          onClick={(e) => {
+          onClick={() => {
+            setQuery('')
             setSearchedTags([])
             setCurrentTag({ value: '' })
             addClickHandle(currentTag)
@@ -108,9 +141,8 @@ const TagAdder = ({ addClickHandle, existedTagList }) => {
             <p className='mx-1 text-center text-sm font-bold text-primary'>
               Popular Tags
             </p>
-            {searchedTags.length > 0
-              ? renderSearchedTagList
-              : renderExistedTagList}
+            {isSearching && <p className='px-2 text-sm'>Searching...</p>}
+            {query.length > 0 ? renderSearchedTagList : renderExistedTagList}
             <DropdownMenuLabel onKeyDown={(e) => e.stopPropagation()}>
               <Input
                 placeholder='Search Tags'

@@ -13,6 +13,16 @@ import { ScrollArea } from './ui/scroll-area'
 import { useRouter } from 'next/navigation'
 import PostTag from './PostTag'
 import CodeEditor from './CodeEditor'
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 const CreatePost = ({ user }) => {
   const router = useRouter()
@@ -20,6 +30,7 @@ const CreatePost = ({ user }) => {
   const [code, setCode] = useState('')
   const [imgUrl, setImgUrl] = useState('')
   const [tagList, setTagList] = useState([])
+  const [isCreating, setIsCreating] = useState(false)
   const [post, setPost] = useState({
     id: 0,
     owner: {
@@ -39,6 +50,7 @@ const CreatePost = ({ user }) => {
   })
   const handleCreate = async (e) => {
     e.preventDefault()
+    setIsCreating(true)
     if (tagList.length === 0) {
       return
     }
@@ -88,6 +100,7 @@ const CreatePost = ({ user }) => {
                 width={40}
                 height={40}
                 className='object-cover'
+                alt='preview-image'
               />
             </div>
           )}
@@ -137,9 +150,37 @@ const CreatePost = ({ user }) => {
           </div>
           <UploadDnD setImgUrl={setImgUrl} />
         </div>
-        <Button className='bg-accent text-background' onClick={handleCreate}>
-          Upload
-        </Button>
+        {tagList.length > 0 ? (
+          <Button
+            className='bg-accent text-background'
+            onClick={handleCreate}
+            disabled={isCreating}
+          >
+            Upload
+          </Button>
+        ) : (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className='bg-accent text-background'>Upload</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className='border-2 border-primary'>
+              <AlertDialogHeader>
+                <AlertDialogTitle className='text-primary'>
+                  Are you missing something?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  You haven&apos;t attached a tag to your post. <br /> Attaching
+                  tags may help your post popular to others.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className='border-primary'>
+                  Close
+                </AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </section>
     </main>
   )

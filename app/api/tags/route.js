@@ -1,5 +1,4 @@
 import { connectToDB } from '@/utils/database'
-import { clerkClient } from '@clerk/nextjs'
 
 export const GET = async (req) => {
   const { searchParams } = new URL(req.url)
@@ -53,30 +52,33 @@ export const GET = async (req) => {
 }
 
 export const POST = async (req) => {
-  const { username, content, imgUrl, code } = await req.json()
+  const { tagName } = await req.json()
   const driver = await connectToDB()
   const createPost = async () => {
     const session = driver.session()
     try {
-      await session.executeWrite((tx) =>
+      const res = await session.executeWrite((tx) =>
         tx.run(
           `
-            match (me: User {username: $username})
-            create (p: Post {content: $content, imgUrl: $imgUrl, code: $code, createdTime: datetime()}) <-[:OWNS]- (me)
+            CREATE (t: Tag { value: $name})
+            RETURN t as tag
          `,
           {
-            username: username,
-            content: content,
-            imgUrl: imgUrl,
-            code: code,
+            name: tagName,
           },
         ),
       )
+      let tag = res.records[0].get('tag')
+      tag = {
+        id: tag.identity['low'],
+        value: tag.properties['value'],
+      }
       await session.close()
+      return tag
     } catch (error) {
       console.log(error)
     }
   }
-  await createPost()
-  return new Response({ message: 'created' }, { status: 201 })
+  const tag = await createPost()
+  return new Response(JSON.stringify(tag), { status: 201 })
 }
