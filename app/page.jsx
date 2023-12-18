@@ -1,16 +1,16 @@
 import Feed from '@/components/Feed'
-import { auth } from '@clerk/nextjs'
+import { auth, currentUser } from '@clerk/nextjs'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const getPosts = async () => {
-  const { userId } = auth()
-  const res = await fetch(`http://localhost:3000/api/feed/${userId}`, {
+  const user = await currentUser()
+  const res = await fetch(`http://localhost:3000/api/feed/${user.username}`, {
     cache: 'no-store',
   })
-  const posts = await res.json()
-  return posts
+
+  return await res.json()
 }
 
 export default async function Home() {
@@ -22,7 +22,9 @@ export default async function Home() {
         <Feed posts={posts} />
       ) : (
         <>
-          <h2 className='text-primary text-2xl font-semibold'>You're not signed in!</h2>
+          <h2 className='text-2xl font-semibold text-primary'>
+            You&amp;re not signed in!
+          </h2>
         </>
       )}
     </main>
