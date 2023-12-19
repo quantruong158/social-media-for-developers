@@ -2,11 +2,10 @@ import Image from 'next/image'
 
 const Comment = ({ comment }) => {
   return (
-    <div
-      className='flex w-full gap-2 rounded-md bg-primary/10 px-2 py-2 text-foreground'
-    >
+    <div className='flex w-full gap-2 rounded-md bg-primary/10 px-2 py-2 text-foreground'>
       {comment.owner.imgUrl ? (
         <Image
+          alt='post image'
           src={comment.owner.imgUrl}
           width={40}
           height={40}

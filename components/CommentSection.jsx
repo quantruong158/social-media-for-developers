@@ -5,10 +5,11 @@ import { Button } from './ui/button'
 import { DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { Input } from './ui/input'
 import { ScrollArea } from './ui/scroll-area'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRef } from 'react'
 import Comment from './Comment'
+
 const CommentSection = ({ username, postId, me }) => {
   const inputRef = useRef()
   const { user } = useUser()
@@ -63,7 +64,7 @@ const CommentSection = ({ username, postId, me }) => {
     >
       <DialogHeader>
         <DialogTitle className='text-center text-primary'>
-          Comments on {username}'s post
+          Comments on {username}&apos;s post
         </DialogTitle>
       </DialogHeader>
 

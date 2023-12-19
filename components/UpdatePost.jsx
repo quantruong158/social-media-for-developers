@@ -90,6 +90,7 @@ const UpdatePost = ({ user, id }) => {
             <div className='absolute bottom-4 right-8 flex items-end gap-1 rounded-lg bg-secondary py-2 pl-5 pr-2'>
               <p className='text-xs text-foreground'>Attached Image:</p>
               <Image
+                alt='preview post image'
                 src={imgUrl}
                 width={40}
                 height={40}
