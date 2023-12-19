@@ -24,9 +24,7 @@ const TagAdder = ({ addClickHandle, existedTagList }) => {
     const fetchSearchResults = async () => {
       try {
         const encodedQuery = encodeURIComponent(query)
-        const res = await fetch(
-          `http://localhost:3000/api/tags?q=${encodedQuery}`,
-        )
+        const res = await fetch(`/api/tags?q=${encodedQuery}`)
         if (!res.ok) {
           throw Error('error fetch tags')
         }
@@ -54,7 +52,7 @@ const TagAdder = ({ addClickHandle, existedTagList }) => {
   const handleAddTag = async () => {
     try {
       setIsAdding(true)
-      const res = await fetch(`http://localhost:3000/api/tags`, {
+      const res = await fetch(`/api/tags`, {
         method: 'POST',
         body: JSON.stringify({
           tagName: query.trim(),

@@ -3,7 +3,7 @@
 export async function fetchFeedPosts(username, page) {
   try {
     const res = await fetch(
-      `http://localhost:3000/api/feed/${username}?page=${page}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/feed/${username}?page=${page}`,
       {
         cache: 'no-store',
       },
@@ -17,7 +17,7 @@ export async function fetchFeedPosts(username, page) {
 export async function fetchUserPosts(username, page) {
   try {
     const res = await fetch(
-      `http://localhost:3000/api/posts?username=${username}&page=${page}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts?username=${username}&page=${page}`,
       {
         cache: 'no-store',
       },
