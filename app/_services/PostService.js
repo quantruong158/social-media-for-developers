@@ -1,7 +1,7 @@
 import * as PostRepo from '@/app/_repositories/PostRepo'
 
-const getPosts = async (username) => {
-  return await PostRepo.getPostsByUsername(username)
+const getPosts = async (username, page) => {
+  return await PostRepo.getPostsByUsername(username, page)
 }
 
 const getAPost = async (postId) => {

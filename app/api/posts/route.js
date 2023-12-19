@@ -3,8 +3,9 @@ import * as PostService from '@/app/_services/PostService'
 export const GET = async (req) => {
   const { searchParams } = new URL(req.url)
   const username = searchParams.get('username')
+  const page = parseInt(searchParams.get('page'))
   try {
-    const posts = await PostService.getPosts(username)
+    const posts = await PostService.getPosts(username, page)
     return new Response(JSON.stringify(posts), { status: 200 })
   } catch (err) {
     console.error(err)

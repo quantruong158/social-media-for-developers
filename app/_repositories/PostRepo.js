@@ -1,6 +1,8 @@
 import { connectToDB } from '@/lib/database'
+import { int } from 'neo4j-driver'
 
-const getFeedPostsByUsername = async (username) => {
+const getFeedPostsByUsername = async (username, page) => {
+  const skip = (page - 1) * 5
   const driver = await connectToDB()
   try {
     const session = driver.session()
@@ -24,9 +26,15 @@ const getFeedPostsByUsername = async (username) => {
         return p as posts, u as users, likes, comments, shares, exists((me) -[:LIKES]-> (p)) as liked, collect(t.value) as tagnames
         
         order by p.createdTime desc
+        
+        skip $skip
+        
+        limit $limit
         `,
         {
           username,
+          skip: int(skip),
+          limit: int(5),
         },
       ),
     )
@@ -61,7 +69,9 @@ const getFeedPostsByUsername = async (username) => {
   }
 }
 
-const getPostsByUsername = async (username) => {
+const getPostsByUsername = async (username, page) => {
+  const skip = (page - 1) * 5
+  console.log(`page here: ${page}`)
   const driver = await connectToDB()
   try {
     const session = driver.session()
@@ -83,9 +93,15 @@ const getPostsByUsername = async (username) => {
         
         return p as posts, u as users, likes, comments, shares, exists((u) -[:LIKES]-> (p)) as liked, collect(t.value) as tagnames
         order by p.createdTime desc
+        
+        skip $skip
+        
+        limit $limit
         `,
         {
           username,
+          skip: int(skip),
+          limit: int(5),
         },
       ),
     )
