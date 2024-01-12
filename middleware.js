@@ -9,6 +9,7 @@ export default authMiddleware({
     '/api/posts',
     '/api/uploadthing',
     '/api/feed/(.*)',
+    '/api/follows',
   ],
 })
 

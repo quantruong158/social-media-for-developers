@@ -1,15 +1,16 @@
 import { connectToDB } from '@/lib/database'
 import { int } from 'neo4j-driver'
 
-const getFeedPostsByUsername = async (username, page) => {
+const getFeedPostsByUsername = async (username, email, page) => {
   const skip = (page - 1) * 5
   const driver = await connectToDB()
   try {
     const session = driver.session()
-    const res = await session.executeRead((tx) =>
+    const res = await session.executeWrite((tx) =>
       tx.run(
         `
-        match (me: User {username: $username})
+        merge (me: User {username: $username, email: $email})
+        with me
         match (me) -[:FOLLOWS]-> (u:User) -[:OWNS]-> (p:Post)
 
         optional match (p) <-[lk:LIKES]- (:User)
@@ -33,6 +34,7 @@ const getFeedPostsByUsername = async (username, page) => {
         `,
         {
           username,
+          email,
           skip: int(skip),
           limit: int(5),
         },

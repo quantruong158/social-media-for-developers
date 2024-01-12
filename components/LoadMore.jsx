@@ -6,15 +6,18 @@ import Spinner from '@/components/Spinner'
 import Feed from '@/components/Feed'
 import Link from 'next/link'
 
-const LoadMore = ({ username, fetchFn }) => {
+const LoadMore = ({ username, email, fetchFn, self }) => {
   const [posts, setPosts] = useState([])
   const [pagesLoaded, setPagesLoaded] = useState(1)
   const [noMorePosts, setNoMorePosts] = useState(false)
   const { ref, inView } = useInView()
   const loadMorePosts = async () => {
     const nextPage = pagesLoaded + 1
-    const newPosts = await fetchFn(username, nextPage)
-    if (newPosts.length === 0) {
+
+    const newPosts = self
+      ? await fetchFn(username, nextPage)
+      : await fetchFn(username, email, nextPage)
+    if (newPosts?.length === 0) {
       setNoMorePosts(true)
       return
     }
@@ -36,13 +39,17 @@ const LoadMore = ({ username, fetchFn }) => {
         </div>
       ) : (
         <div className='mb-3 flex h-14 w-[650px] items-center justify-center rounded-xl bg-secondary'>
-          <p className='font-semibold text-black'>
-            You have no more posts to view,{' '}
-            <Link href='/follow' className='font-extrabold text-primary'>
-              FOLLOW
-            </Link>{' '}
-            more users to see more!
-          </p>
+          {self ? (
+            <p className='font-semibold text-black'>End of posts!</p>
+          ) : (
+            <p className='font-semibold text-black'>
+              You have no more posts to view,{' '}
+              <Link href='/follow' className='font-extrabold text-primary'>
+                FOLLOW
+              </Link>{' '}
+              more users to see more!
+            </p>
+          )}
         </div>
       )}
     </>
